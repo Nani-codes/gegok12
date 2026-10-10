@@ -102,7 +102,10 @@ class RegisterRequest extends FormRequest
             //
         ];
 
-        $rules['g-recaptcha-response']=['required', new ValidRecaptcha];
+        // Skip captcha when Coolify/env has no reCAPTCHA keys configured
+        if (filled(env('GOOGLE_RECAPTCHA_KEY')) && filled(env('GOOGLE_RECAPTCHA_SECRET'))) {
+            $rules['g-recaptcha-response'] = ['required', new ValidRecaptcha];
+        }
 
         return $rules;
     }

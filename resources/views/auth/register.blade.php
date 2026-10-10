@@ -327,6 +327,7 @@
               @endif
             </div>
         </div>
+        @if(filled(env('GOOGLE_RECAPTCHA_KEY')))
         <div class="flex lg:items-center flex-col lg:flex-row">
           <div class="g-recaptcha" id="feedback-recaptcha" name="feedback-recaptch"
            data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY') }}"></div>
@@ -336,6 +337,7 @@
             </span>
           @endif
         </div>
+        @endif
         <div class="form-group my-6">
             <div class="w-full z-40">
               <button type="submit" class="btn btn-primary bg-red-600 text-gray-200 uppercase px-8 py-1 tracking-wider w-full z-40">
@@ -354,7 +356,9 @@
   </div>
 </div>
 </div>
+@if(filled(env('GOOGLE_RECAPTCHA_KEY')))
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+@endif
 @endsection
 
 @push('scripts')
