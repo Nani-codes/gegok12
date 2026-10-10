@@ -13,15 +13,15 @@ class BootstrapDemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        if (School::query()->exists()) {
-            $this->command?->info('Schools already present — skipping demo bootstrap.');
-
-            return;
+        if (! School::query()->exists()) {
+            $this->command?->info('No schools found — seeding demo school data…');
+            $this->call(DatabaseSeeder::class);
+            $this->call(SiteAdminSeeder::class);
+        } else {
+            $this->command?->info('Schools already present — skipping full demo seed.');
         }
 
-        $this->command?->info('No schools found — seeding demo school data…');
-
-        $this->call(DatabaseSeeder::class);
-        $this->call(SiteAdminSeeder::class);
+        // Always ensure a school admin exists (partial boots often created the school only).
+        $this->call(SchoolAdminSeeder::class);
     }
 }
