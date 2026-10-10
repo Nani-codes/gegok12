@@ -10,7 +10,6 @@ services:
     user: "0:0"   # run as root to avoid permission issues
     volumes:
       - ./:/var/www
-      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       - APP_ENV=${APP_ENV:-local}
       - APP_DEBUG=${APP_DEBUG:-true}
@@ -66,13 +65,15 @@ services:
       - laravel
 
   nginx:
-    image: nginx:latest
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: gegok12-nginx:latest
     container_name: laravel_nginx
     ports:
       - "${APP_PORT:-8090}:80"
     volumes:
       - ./:/var/www
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
     networks:

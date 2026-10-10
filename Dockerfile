@@ -32,6 +32,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
+# Laravel installer / long-running request defaults (baked in — no host bind-mount)
+COPY docker/php.ini /usr/local/etc/php/conf.d/zz-laravel.ini
+
 # Fix Git "dubious ownership" issue automatically
 RUN git config --system --add safe.directory /var/www
 
