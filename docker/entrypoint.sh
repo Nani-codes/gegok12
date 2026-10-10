@@ -28,6 +28,7 @@ echo "Database is ready."
 
 php artisan migrate --force --no-interaction
 php artisan db:seed --class=Database\\Seeders\\SiteAdminSeeder --force --no-interaction
+php artisan db:seed --class=Database\\Seeders\\BootstrapDemoDataSeeder --force --no-interaction
 
 # Mark app installed for AppServiceProvider / installer checks
 touch storage/installed

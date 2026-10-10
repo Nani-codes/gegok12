@@ -15,6 +15,13 @@ class SettingsTableSeeder extends Seeder
      */
     public function run()
     {
+        // Idempotent: skip if already seeded; clear partial rows (e.g. login_status-only migrate)
+        if (DB::table('settings')->where('key', 'sitetitle')->exists()) {
+            return;
+        }
+
+        DB::table('settings')->delete();
+
          DB::table('settings')->insert([
             'key'           => 'sitetitle',
             'name'          => 'Site Title',
