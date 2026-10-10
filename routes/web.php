@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Superadmin\DashboardController;
-
 /*Route::get('/', function () {
   return redirect()->route('login');
     //return view('welcome');

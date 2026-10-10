@@ -39,6 +39,23 @@ class LoginController extends Controller implements ShouldQueue
 
     protected $redirectTo = '/admin/dashboard';
 
+    /**
+     * Post-login path by role (SiteAdmin is not a school admin).
+     */
+    protected function redirectTo()
+    {
+        $user = Auth::user();
+
+        if ($user && method_exists($user, 'isSiteAdmin') && ($user->isSiteAdmin() || $user->isSiteSubAdmin())) {
+            return '/superadmin/dashboard';
+        }
+
+        if ($user && method_exists($user, 'isStockKeeper') && $user->isStockKeeper()) {
+            return '/stock/dashboard';
+        }
+
+        return '/admin/dashboard';
+    }
 
     /**
      * Create a new controller instance.

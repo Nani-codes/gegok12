@@ -1509,6 +1509,22 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
+     * Check if this user is the overall site admin.
+     */
+    public function isSiteAdmin(): bool
+    {
+        return (int) $this->usergroup_id === (int) self::SITEADMIN_USERGROUP_ID;
+    }
+
+    /**
+     * Check if this user is a site sub-admin.
+     */
+    public function isSiteSubAdmin(): bool
+    {
+        return (int) $this->usergroup_id === (int) self::SITESUBADMIN_USERGROUP_ID;
+    }
+
+    /**
      * Check if this user is a school admin.
      *
      * @return bool

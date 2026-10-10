@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'signed'                =>  \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle'              =>  \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'siteadmin'             =>  \App\Http\Middleware\MustBeSiteAdmin::class,
+        'superadmin'            =>  \App\Http\Middleware\MustBeSiteAdmin::class,
         'sitesubadmin'          =>  \App\Http\Middleware\MustBeSiteSubAdmin::class,
         'role'                  =>  \Laratrust\Middleware\Role::class,
         'permission'            =>  \Laratrust\Middleware\Permission::class,

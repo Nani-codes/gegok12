@@ -3,39 +3,37 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class MustBeSiteAdmin
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * Allow overall SiteAdmin / SiteSubAdmin; send other roles to their dashboards.
      */
-     public function handle($request, Closure $next)
+    public function handle($request, Closure $next)
     {
-         
-        if(\Auth::user()->isAdmin())
-        {
+        $user = Auth::user();
+
+        if ($user && ($user->isSiteAdmin() || $user->isSiteSubAdmin())) {
+            return $next($request);
+        }
+
+        if ($user && $user->isAdmin()) {
             return redirect('/admin/dashboard');
         }
 
-        if(\Auth::user()->isTeacher())
-        {
+        if ($user && $user->isTeacher()) {
             return redirect('/teacher/dashboard');
         }
 
-        if(\Auth::user()->isStudent())
-        {
+        if ($user && $user->isStudent()) {
             return redirect('/student/dashboard');
         }
-        
-        if(\Auth::user()->isLibrarian())
-        {
-            return redirect('/library/dashboard');          
+
+        if ($user && $user->isLibrarian()) {
+            return redirect('/library/dashboard');
         }
-        
+
         abort(404);
     }
 }

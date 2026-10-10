@@ -18,6 +18,11 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next, $guard = null)
     {
         if (Auth::guard($guard)->check()) {
+            $user = Auth::guard($guard)->user();
+            if ($user && method_exists($user, 'isSiteAdmin') && ($user->isSiteAdmin() || $user->isSiteSubAdmin())) {
+                return redirect('/superadmin/dashboard');
+            }
+
             return redirect('/admin/dashboard');
         }
 

@@ -3,58 +3,53 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class MustBeSchoolAdmin
 {
     /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * Allow school admins; send SiteAdmin to superadmin (not abort 404).
      */
     public function handle($request, Closure $next)
     {
-       
-        if(\Auth::user()->isAdmin())
-        {
+        $user = Auth::user();
+
+        if ($user && $user->isAdmin()) {
             return $next($request);
         }
 
-        if(\Auth::user()->isTeacher())
-        {
+        if ($user && ($user->isSiteAdmin() || $user->isSiteSubAdmin())) {
+            return redirect('/superadmin/dashboard');
+        }
+
+        if ($user && $user->isTeacher()) {
             return redirect('/teacher/dashboard');
         }
 
-        if(\Auth::user()->isStudent())
-        {
+        if ($user && $user->isStudent()) {
             return redirect('/student/dashboard');
         }
-        
-        if(\Auth::user()->isLibrarian())
-        {
-            return redirect('/library/dashboard');          
+
+        if ($user && $user->isLibrarian()) {
+            return redirect('/library/dashboard');
         }
-        
-        if(\Auth::user()->isAlumni())
-        {
-            return redirect('/alumni/dashboard');          
+
+        if ($user && $user->isAlumni()) {
+            return redirect('/alumni/dashboard');
         }
-        
-        if(\Auth::user()->isReceptionist())
-        {
-            return redirect('/receptionist/dashboard');          
+
+        if ($user && $user->isReceptionist()) {
+            return redirect('/receptionist/dashboard');
         }
-        
-        if(\Auth::user()->isAccountant())
-        {
-            return redirect('/accountant/dashboard');          
+
+        if ($user && $user->isAccountant()) {
+            return redirect('/accountant/dashboard');
         }
-        if(\Auth::user()->isStockKeeper())
-        {
-            return redirect('/stock/dashboard');          
+
+        if ($user && $user->isStockKeeper()) {
+            return redirect('/stock/dashboard');
         }
-            
+
         abort(404);
     }
 }
