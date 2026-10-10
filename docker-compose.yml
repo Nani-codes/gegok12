@@ -10,14 +10,132 @@ services:
     user: "0:0"   # run as root so entrypoint can migrate/seed
     restart: unless-stopped
     environment:
-      - APP_ENV=${APP_ENV:-local}
-      - APP_DEBUG=${APP_DEBUG:-true}
+      # --- App ---
+      - APP_NAME=${APP_NAME:-GegoK12}
+      - APP_ENV=${APP_ENV:-production}
+      - APP_KEY=${APP_KEY:-}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_URL=${APP_URL:-http://localhost:8090}
+      - TIMEZONE=${TIMEZONE:-Asia/Kolkata}
+      - DEBUGBAR_ENABLED=${DEBUGBAR_ENABLED:-false}
+      - LOG_CHANNEL=${LOG_CHANNEL:-daily}
+      - LOG_SLACK_WEBHOOK_URL=${LOG_SLACK_WEBHOOK_URL:-}
+
+      # --- Database (host is always the compose service) ---
       - DB_CONNECTION=${DB_CONNECTION:-mysql}
       - DB_HOST=db
       - DB_PORT=${DB_PORT:-3306}
       - DB_DATABASE=${DB_DATABASE:-school}
       - DB_USERNAME=${DB_USERNAME:-root}
       - DB_PASSWORD=${DB_PASSWORD:-root}
+      - DB_SOCKET=${DB_SOCKET:-}
+
+      # --- Drivers ---
+      - BROADCAST_DRIVER=${BROADCAST_DRIVER:-log}
+      - CACHE_DRIVER=${CACHE_DRIVER:-file}
+      - SESSION_DRIVER=${SESSION_DRIVER:-file}
+      - SESSION_LIFETIME=${SESSION_LIFETIME:-120}
+      - SESSION_DOMAIN=${SESSION_DOMAIN:-}
+      - SESSION_SECURE_COOKIE=${SESSION_SECURE_COOKIE:-false}
+      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-sync}
+      - QUEUE_DRIVER=${QUEUE_DRIVER:-sync}
+      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-uploads}
+      - FILESYSTEM_DRIVER=${FILESYSTEM_DRIVER:-local}
+
+      # --- Redis (optional; unused when CACHE/SESSION/QUEUE are file/sync) ---
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-null}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+
+      # --- Mail ---
+      - MAIL_MAILER=${MAIL_MAILER:-smtp}
+      - MAIL_DRIVER=${MAIL_DRIVER:-smtp}
+      - MAIL_HOST=${MAIL_HOST:-smtp.mailtrap.io}
+      - MAIL_PORT=${MAIL_PORT:-2525}
+      - MAIL_USERNAME=${MAIL_USERNAME:-null}
+      - MAIL_PASSWORD=${MAIL_PASSWORD:-null}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-null}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-admin@school.com}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME:-GegoK12}
+      - MAIL_STATUS=${MAIL_STATUS:-off}
+      - REMINDER=${REMINDER:-mail}
+
+      # --- SMS ---
+      - SMS_GATEWAY=${SMS_GATEWAY:-MSG91}
+      - SMS_GATEWAY_API_KEY=${SMS_GATEWAY_API_KEY:-}
+      - SMS_GATEWAY_SENDER_ID=${SMS_GATEWAY_SENDER_ID:-}
+      - SMS_GATEWAY_ROUTE_NO=${SMS_GATEWAY_ROUTE_NO:-4}
+      - SMS_STATUS=${SMS_STATUS:-off}
+      - REMINDER_API_KEY=${REMINDER_API_KEY:-}
+      - REMINDER_SENDER_ID=${REMINDER_SENDER_ID:-}
+      - REMINDER_ROUTE_NO=${REMINDER_ROUTE_NO:-4}
+
+      # --- Push / FCM / Firebase ---
+      - FCM_SERVER_KEY=${FCM_SERVER_KEY:-}
+      - FCM_SENDER_ID=${FCM_SENDER_ID:-}
+      - FCM_TEACHER_SERVER_KEY=${FCM_TEACHER_SERVER_KEY:-}
+      - FCM_TEACHER_SENDER_ID=${FCM_TEACHER_SENDER_ID:-}
+      - FCM_PROTOCOL=${FCM_PROTOCOL:-http}
+      - FIREBASE_CREDENTIALS=${FIREBASE_CREDENTIALS:-}
+      - TEACHER_FIREBASE_CREDENTIALS=${TEACHER_FIREBASE_CREDENTIALS:-}
+      - FIREBASE_PROJECT=${FIREBASE_PROJECT:-app}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS:-}
+
+      # --- Pusher / Mix ---
+      - PUSHER_APP_ID=${PUSHER_APP_ID:-}
+      - PUSHER_APP_KEY=${PUSHER_APP_KEY:-}
+      - PUSHER_APP_SECRET=${PUSHER_APP_SECRET:-}
+      - PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER:-mt1}
+      - MIX_PUSHER_APP_KEY=${MIX_PUSHER_APP_KEY:-}
+      - MIX_PUSHER_APP_CLUSTER=${MIX_PUSHER_APP_CLUSTER:-mt1}
+
+      # --- AWS / S3 ---
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_BUCKET=${AWS_BUCKET:-}
+      - AWS_URL=${AWS_URL:-}
+      - AWS_ENDPOINT=${AWS_ENDPOINT:-}
+      - AWS_USE_PATH_STYLE_ENDPOINT=${AWS_USE_PATH_STYLE_ENDPOINT:-false}
+      - AWS_KEY=${AWS_KEY:-}
+      - AWS_SECRET=${AWS_SECRET:-}
+
+      # --- reCAPTCHA (leave empty to skip captcha on register) ---
+      - GOOGLE_RECAPTCHA_KEY=${GOOGLE_RECAPTCHA_KEY:-}
+      - GOOGLE_RECAPTCHA_SECRET=${GOOGLE_RECAPTCHA_SECRET:-}
+
+      # --- Scout / Algolia ---
+      - SCOUT_DRIVER=${SCOUT_DRIVER:-null}
+      - SCOUT_QUEUE=${SCOUT_QUEUE:-false}
+      - SCOUT_PREFIX=${SCOUT_PREFIX:-}
+      - ALGOLIA_APP_ID=${ALGOLIA_APP_ID:-}
+      - ALGOLIA_SECRET=${ALGOLIA_SECRET:-}
+
+      # --- Twilio / Maps / Addons ---
+      - TWILIO_SID=${TWILIO_SID:-}
+      - TWILIO_TOKEN=${TWILIO_TOKEN:-}
+      - TWILIO_KEY=${TWILIO_KEY:-}
+      - TWILIO_SECRET=${TWILIO_SECRET:-}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY:-}
+      - ADDON_API_URL=${ADDON_API_URL:-}
+
+      # --- App tuning ---
+      - CACHE_TIME=${CACHE_TIME:-8400}
+      - SNOOZE_TIME=${SNOOZE_TIME:-600}
+      - ACTIVITY_LOGGER_ENABLED=${ACTIVITY_LOGGER_ENABLED:-true}
+      - SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS:-localhost,127.0.0.1,gegok.trilolabs.com}
+      - AIRLOCK_STATEFUL_DOMAINS=${AIRLOCK_STATEFUL_DOMAINS:-localhost}
+
+      # --- Optional third-party (from config/services.php) ---
+      - MAILGUN_DOMAIN=${MAILGUN_DOMAIN:-}
+      - MAILGUN_SECRET=${MAILGUN_SECRET:-}
+      - SES_KEY=${SES_KEY:-}
+      - SES_SECRET=${SES_SECRET:-}
+      - SES_REGION=${SES_REGION:-us-east-1}
+      - SPARKPOST_SECRET=${SPARKPOST_SECRET:-}
+      - STRIPE_KEY=${STRIPE_KEY:-}
+      - STRIPE_SECRET=${STRIPE_SECRET:-}
     depends_on:
       - db
     networks:
