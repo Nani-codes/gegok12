@@ -29,18 +29,32 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www
+# Use /app (not /var/www) so Coolify's leftover ./ → /var/www mount cannot hide the code
+WORKDIR /app
 
-# Laravel installer / long-running request defaults (baked in — no host bind-mount)
 COPY docker/php.ini /usr/local/etc/php/conf.d/zz-laravel.ini
 
-# Fix Git "dubious ownership" issue automatically
-RUN git config --system --add safe.directory /var/www
+RUN git config --system --add safe.directory /app
 
-# Ensure correct permissions for Laravel
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www
+COPY --chown=www-data:www-data . /app
 
-# Switch to www-data user (recommended for Laravel)
 USER www-data
+
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts \
+    && composer dump-autoload --optimize --no-scripts
+
+USER root
+
+RUN mkdir -p \
+      storage/framework/cache \
+      storage/framework/sessions \
+      storage/framework/views \
+      storage/logs \
+      bootstrap/cache \
+    && chown -R www-data:www-data /app \
+    && chmod -R 775 storage bootstrap/cache
