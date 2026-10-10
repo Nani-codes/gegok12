@@ -36,21 +36,17 @@ COPY docker/php.ini /usr/local/etc/php/conf.d/zz-laravel.ini
 
 RUN git config --system --add safe.directory /app
 
-COPY --chown=www-data:www-data . /app
+COPY . /app
 
-USER www-data
-
+# Run as root — no composer.lock in git, so install must be able to write it
 RUN composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader \
     --no-scripts \
-    && composer dump-autoload --optimize --no-scripts
-
-USER root
-
-RUN mkdir -p \
+    && composer dump-autoload --optimize --no-scripts \
+    && mkdir -p \
       storage/framework/cache \
       storage/framework/sessions \
       storage/framework/views \
