@@ -112,17 +112,32 @@ class AppServiceProvider extends ServiceProvider {
         }
         //
 
-        // Skip database operations if app is not installed yet
-        if ( !file_exists( storage_path( 'installed' ) ) || !file_exists( base_path( '.env' ) ) ) {
+        // Coolify injects env vars without a .env file — don't require that path.
+        $isInstalled = file_exists( storage_path( 'installed' ) );
+
+        if ( ! $isInstalled && filled( config( 'app.key' ) ) ) {
+            try {
+                $isInstalled = Schema::hasTable( 'settings' );
+            } catch ( \Throwable $e ) {
+                return;
+            }
+        }
+
+        if ( ! $isInstalled ) {
             return;
         }
 
-        if ( !\App::runningInConsole() && count( Schema::getColumnListing( 'settings' ) ) ) {
+        if ( !\App::runningInConsole() && Schema::hasTable( 'settings' ) ) {
 
             $settings = Setting::all();
 
             foreach ( $settings as $key => $setting ) {
                 Config::set( 'settings.'.$setting->key, $setting->value );
+            }
+
+            // Seeder default is active; missing key must not look like maintenance (null == 0).
+            if ( Config::get( 'settings.login_status' ) === null ) {
+                Config::set( 'settings.login_status', '1' );
             }
         }
 
